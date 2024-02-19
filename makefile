@@ -28,6 +28,9 @@ gdb-%: all
 
 clean:
 	rm -rf $(BUILD_DIR)
+	rm -f mkfs
+	cargo clean
+	cd tool && cargo clean && cd ..
 
 format:
 	cargo fmt
@@ -41,3 +44,6 @@ gdb-user-%: $(TARGETS) $(BUILD_DIR)/disk.img
 
 test-user-debug-%: $(TARGETS) $(BUILD_DIR)/disk.img
 	$(CARGO) --features test-user,debug -- -append "$*"
+
+submission:: clean
+	tar cjvf submission.tar.bz2 *

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Check if at least one argument is provided
+if [ "$#" -lt 1 ]; then
+  echo "Usage: $0 <kernel> [additional arguments for qemu]"
+  exit 1
+fi
+
+make
+
+# The kernel to be executed with QEMU
+KERNEL=$1
+
+# Copy the disk.img to /tmp directory
+rm -f /tmp/disk.img
+cp "build/disk.img" /tmp/
+
+if [ $? -ne 0 ]; then
+  echo "Failed to copy file to /tmp. Ensure the file exists and you have permission to copy."
+  exit 1
+fi
+
+# Shift the first argument so only additional arguments remain
+shift
+
+# Run the binary with qemu, passing any additional arguments
+qemu-system-riscv64 \
+    -machine virt \
+    -display none \
+    -bios fw_jump.bin \
+    -global virtio-mmio.force-legacy=false \
+    --blockdev driver=file,node-name=disk,filename=/tmp/disk.img \
+    -device virtio-blk-device,drive=disk,bus=virtio-mmio-bus.0 \
+    -kernel "$KERNEL" "$@"

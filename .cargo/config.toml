@@ -2,17 +2,7 @@
 target = "riscv64gc-unknown-none-elf"
 
 [target.riscv64gc-unknown-none-elf]
-runner = """
-qemu-system-riscv64 \
--machine virt \
--display none \
--bios fw_jump.bin \
--global virtio-mmio.force-legacy=false \
---blockdev driver=file,node-name=disk,filename=build/disk.img \
--snapshot \
--device virtio-blk-device,drive=disk,bus=virtio-mmio-bus.0 \
--kernel
-"""
+runner = "tacos"
 rustflags = [
   "-Clink-arg=-Tsrc/linker.ld",
   "-Cforce-frame-pointers=yes",

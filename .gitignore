@@ -33,3 +33,6 @@ mkfs
 # Debug files
 *.asm
 *.sym
+
+# Submissions
+*.tar.bz2
