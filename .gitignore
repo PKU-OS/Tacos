@@ -1,0 +1,35 @@
+# MACOS #
+#########
+.DS_Store
+
+# Editor #
+.helix/*
+
+#  VSC  #
+#########
+.vscode/*
+!.vscode/launch.json
+
+# CARGO #
+#########
+/target/*
+/Cargo.lock
+
+*.img
+
+# Prerequisites
+*.d
+*.S
+
+# Object files
+build/
+*.o
+
+# Executables
+*.out
+_*
+mkfs
+
+# Debug files
+*.asm
+*.sym

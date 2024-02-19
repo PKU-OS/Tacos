@@ -1,0 +1,80 @@
+[package]
+name = "rus_pintos"
+rust-version = "1.68.0"
+version = "0.1.0"
+readme = "README.md"
+
+[dependencies]
+riscv = "0.8"
+bitflags = "1.3.2"
+elf_rs = "0.3.0"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+[features]
+debug = []
+
+shell = []
+
+thread-scheduler-priority = []
+
+# ----------------------------------- TEST ----------------------------------- #
+
+test = []
+
+# --------------------------------- UNIT TEST -------------------------------- #
+
+test-unit = ["test"]
+
+test-sync = ["test-unit"]
+test-sync-condvar = ["test-unit"]
+test-sync-sema_fifo = ["test-unit"]
+
+test-thread = ["test-unit"]
+test-thread-adder = ["test-unit"]
+test-thread-block = ["test-unit"]
+test-thread-bomb = ["test-unit"]
+test-thread-spin_yield = ["test-unit"]
+test-thread-spin_interrupt = ["test-unit"]
+
+test-mem-malloc = ["test-unit"]
+
+test-fs-inmem = ["test-unit"]
+test-fs-disk = ["test-unit"]
+test-fs-disk-simple = ["test-unit", "test-fs-disk"]
+
+test-virtio = ["test-unit"]
+test-virtio-simple = ["test-unit"]
+
+# ------------------------------- SCHEDULE TEST ------------------------------ #
+
+test-schedule = ["thread-scheduler-priority", "test"]
+
+test-alarm-zero = ["test-schedule"]
+test-alarm-negative = ["test-schedule"]
+test-alarm-simultaneous = ["test-schedule"]
+test-alarm-single = ["test-schedule"]
+test-alarm-multiple = ["test-schedule"]
+
+test-priority-alarm = ["test-schedule"]
+test-priority-change = ["test-schedule"]
+test-priority-condvar = ["test-schedule"]
+test-priority-fifo = ["test-schedule"]
+test-priority-preempt = ["test-schedule"]
+test-priority-sema = ["test-schedule"]
+
+test-donation-chain = ["test-schedule"]
+test-donation-lower = ["test-schedule"]
+test-donation-nest = ["test-schedule"]
+test-donation-one = ["test-schedule"]
+test-donation-sema = ["test-schedule"]
+test-donation-two = ["test-schedule"]
+test-donation-three = ["test-schedule"]
+
+# --------------------------------- USER TEST -------------------------------- #
+
+test-user = ["test"]

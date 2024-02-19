@@ -1,0 +1,22 @@
+# case_name = ["args", option<grade>]
+# Alarms, 18
+alarm-zero = ["", 2]
+alarm-negative = ["", 2]
+alarm-simultaneous = ["", 5]
+alarm-single = ["", 4]
+alarm-multiple = ["", 5]
+# Priority Basic, 36
+priority-alarm = ["", 6]
+priority-change = ["", 6]
+priority-condvar = ["", 6]
+priority-fifo = ["", 6]
+priority-preempt = ["", 6]
+priority-sema = ["", 6]
+# Priority Donation, 46
+donation-chain = ["", 10]
+donation-lower = ["", 6]
+donation-nest = ["", 6]
+donation-one = ["", 6]
+donation-sema = ["", 6]
+donation-two = ["", 6]
+donation-three = ["", 6]

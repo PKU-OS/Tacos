@@ -1,0 +1,24 @@
+# MACOS #
+#########
+.DS_Store
+
+# Editor #
+.helix/*
+
+#  VSC  #
+#########
+.vscode/*
+!.vscode/launch.json
+
+# CARGO #
+#########
+/target/*
+/Cargo.lock
+
+# Test bookmarks
+
+bookmarks/*
+!bookmarks/unit.toml
+!bookmarks/lab1.toml
+!bookmarks/lab2.toml
+!bookmarks/lab3.toml

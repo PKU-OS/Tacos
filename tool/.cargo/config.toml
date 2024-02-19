@@ -1,0 +1,10 @@
+[build]
+target = "x86_64-unknown-linux-gnu"
+
+[alias]
+bd = "run -q --release -- build"
+tt = "run -q --release -- test"
+bk = "run -q --release -- book"
+gdb = "run -q --release -- test --gdb"
+grade = "run -q --release -- test --grade"
+h = "run -q --release -- help"

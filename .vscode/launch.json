@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "type": "gdb",
+            "request": "attach",
+            "name": "Attach to gdbserver",
+            "executable": "${workspaceFolder}/target/riscv64gc-unknown-none-elf/debug/rus_pintos",
+            "target": ":1234",
+            "remote": true,
+            "cwd": "${workspaceRoot}",
+            "gdbpath": "/usr/bin/gdb-multiarch",
+            "valuesFormatting": "prettyPrinters"
+        }
+    ]
+}
