@@ -1,5 +1,5 @@
 [package]
-name = "rus_pintos"
+name = "tacos"
 rust-version = "1.68.0"
 version = "0.1.0"
 readme = "README.md"

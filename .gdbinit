@@ -1,12 +1,12 @@
 define file-debug
-file ./target/riscv64gc-unknown-none-elf/debug/rus_pintos
+file ./target/riscv64gc-unknown-none-elf/debug/tacos
 end
 document file-debug
 add symbol file of debug target
 end
 
 define file-release
-file ./target/riscv64gc-unknown-none-elf/release/rus_pintos
+file ./target/riscv64gc-unknown-none-elf/release/tacos
 end
 document file-release
 add symbol file of release target

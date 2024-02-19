@@ -5,7 +5,7 @@ use clap::{Args, Parser, Subcommand};
 #[derive(Parser, Debug)]
 #[command(
     name = "tool",
-    about = "A tool for building, testing and debugging RusPintos."
+    about = "A tool for building, testing and debugging Tacos."
 )]
 pub struct Cli {
     #[command(subcommand)]
