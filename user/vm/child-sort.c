@@ -7,7 +7,7 @@
 uint8 buf[128 * 1024];
 size_t histogram[256];
 
-int main(int argc, char* argv[]) {
+void main(int argc, char* argv[]) {
     int fd;
     uint8* p;
     size_t size;
@@ -25,6 +25,4 @@ int main(int argc, char* argv[]) {
     seek(fd, 0);
     write(fd, buf, size);
     close(fd);
-
-    return 123;
 }

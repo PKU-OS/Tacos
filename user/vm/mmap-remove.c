@@ -16,7 +16,7 @@ void main() {
 
     /* Close file and delete it. */
     close(fd);
-    assert(remove("sample.txt"), "remove \"sample.txt\"");
+    assert(remove("sample.txt") == 0, "remove \"sample.txt\"");
     assert(open("sample.txt", 0) == -1, "try to open \"sample.txt\"");
 
     /* Create a new file in hopes of overwriting data from the old

@@ -11,7 +11,7 @@ void main(void) {
     char buf2[65536];
 
     /* Write file via write(). */
-    assert((fd = open("sample.txt", O_CREATE | O_WRONLY | O_TRUNC) > 2));
+    assert(((fd = open("sample.txt", O_CREATE | O_WRONLY | O_TRUNC)) > 2));
     assert(write(fd, sample, slen) == slen);
     close(fd);
 

@@ -10,5 +10,5 @@ void main() {
 
     const char* args[] = {"child-linear", 0};
     for (i = 0; i < CHILD_CNT; i++) assert((children[i] = exec(args[0], args)) != -1);
-    for (i = 0; i < CHILD_CNT; i++) assert(wait(children[i]) == 0x42, "wait for child %d", i);
+    for (i = 0; i < CHILD_CNT; i++) assert(wait(children[i]) == 0, "wait for child %d", i);
 }

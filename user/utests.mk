@@ -44,3 +44,7 @@ $(BUILD_DIR):
 $(BUILD_DIR)/sample.txt:
 	#! Ensure sample.txt is stored with LF in disk.img
 	tr -d '\r' < user/userprogs/sample.txt > $(BUILD_DIR)/sample.txt
+
+$(BUILD_DIR)/zeros:
+	dd if=/dev/zero of=$(BUILD_DIR)/zeros bs=8192 count=1
+

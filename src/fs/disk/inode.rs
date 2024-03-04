@@ -8,6 +8,7 @@ use core::{cmp, mem};
 use super::{bytes_to_sectors, Inum, DISKFS};
 use crate::device::virtio::{Virtio, SECTOR_SIZE};
 use crate::fs::Vnode;
+use crate::mem::{Translate, PG_MASK, PG_SIZE};
 use crate::sync::Mutex;
 use crate::{OsError, Result};
 
@@ -158,7 +159,7 @@ impl Inode {
             let oldlen = data.inner.len + desc.shrink_len;
             if newlen <= oldlen {
                 // No need to re alloc, but should flush new len to disk.
-                desc.shrink_len = newlen - oldlen;
+                desc.shrink_len = oldlen - newlen;
                 flush_len(desc, data);
                 Ok(())
             } else {
@@ -191,6 +192,10 @@ impl Inode {
 }
 
 impl Vnode for Inode {
+    fn inum(&self) -> usize {
+        self.0.lock().0.sector as usize
+    }
+
     fn len(&self) -> usize {
         self.0.lock().1.inner.len as _
     }
@@ -219,14 +224,18 @@ impl Vnode for Inode {
                 break;
             }
 
-            if chunk_size == SECTOR_SIZE {
-                // Directly read from disk to `buf`.
-                Virtio::read_sector(
-                    sector as _,
-                    (&mut buf[bytes_read..bytes_read + SECTOR_SIZE])
-                        .try_into()
-                        .unwrap(),
-                );
+            let page_off = (buf.as_ptr() as usize + bytes_read) & PG_MASK;
+
+            if (chunk_size == SECTOR_SIZE) && (page_off <= PG_SIZE - SECTOR_SIZE) {
+                // Virtio only supports kernel buffers.
+                // So we need to convert the possible user buffer into kernel buffer.
+                let buf_kvm: &mut [u8; SECTOR_SIZE] = (&mut buf
+                    [bytes_read..bytes_read + SECTOR_SIZE])
+                    .translate()
+                    .ok_or(OsError::BadPtr)?
+                    .try_into()
+                    .unwrap();
+                Virtio::read_sector(sector as _, buf_kvm);
             } else {
                 // We need a bounce buffer.
                 let mut bounce = [0; SECTOR_SIZE];
@@ -278,13 +287,18 @@ impl Vnode for Inode {
                 break;
             }
 
-            if chunk_size == SECTOR_SIZE {
-                Virtio::write_sector(
-                    sector as _,
-                    (&buf[bytes_written..bytes_written + SECTOR_SIZE])
-                        .try_into()
-                        .unwrap(),
-                );
+            let page_off = (buf.as_ptr() as usize + bytes_written) & PG_MASK;
+
+            if (chunk_size == SECTOR_SIZE) && (page_off <= PG_SIZE - SECTOR_SIZE) {
+                // Virtio only supports kernel buffers.
+                // So we need to convert the possible user buffer into kernel buffer.
+                let buf_kvm: &[u8; SECTOR_SIZE] = (&buf
+                    [bytes_written..bytes_written + SECTOR_SIZE])
+                    .translate()
+                    .ok_or(OsError::BadPtr)?
+                    .try_into()
+                    .unwrap();
+                Virtio::write_sector(sector as _, buf_kvm);
             } else {
                 // We need a bounce buffer, preserving old bytes which should not be written.
                 let mut bounce = [0; SECTOR_SIZE];

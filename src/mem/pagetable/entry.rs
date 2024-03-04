@@ -67,6 +67,27 @@ impl Entry {
         self.flag().contains(PTEFlags::U)
     }
 
+    pub fn is_dirty(&self) -> bool {
+        self.flag().contains(PTEFlags::D)
+    }
+
+    pub fn is_executable(&self) -> bool {
+        self.flag().contains(PTEFlags::X)
+    }
+
+    pub fn is_accessed(&self) -> bool {
+        self.flag().contains(PTEFlags::A)
+    }
+
+    // TODO: should implement in pagetable, and re-activate
+    pub fn set_invalid(&mut self) {
+        self.0 &= !PTEFlags::V.bits;
+    }
+
+    pub fn set_unaccessed(&mut self) {
+        self.0 &= !PTEFlags::A.bits;
+    }
+
     /// A PTE is a leaf PTE when at least one bit in R, W and X
     /// is set; otherwise, it is a pointer to the next level of
     /// the page table.

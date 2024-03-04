@@ -8,6 +8,7 @@
 #define SIZE (128 * 1024)
 
 static char* buf = (char*)0x10000000;
+static char zeros[SIZE];
 
 void main() {
     size_t i;
@@ -15,6 +16,7 @@ void main() {
 
     /* Create file, mmap. */
     assert((fd = open("buffer", O_CREATE | O_RDWR)) > 2);
+    assert(write(fd, zeros, SIZE) == SIZE, "write zeros");
     assert(mmap(fd, buf) != MAP_FAILED, "mmap \"buffer\"");
 
     /* Initialize. */

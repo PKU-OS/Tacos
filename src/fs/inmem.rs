@@ -69,6 +69,10 @@ struct Inode {
 }
 
 impl Vnode for Inode {
+    fn inum(&self) -> usize {
+        self.buf.lock().as_ptr() as usize
+    }
+
     fn len(&self) -> usize {
         self.buf.lock().len()
     }

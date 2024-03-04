@@ -185,6 +185,8 @@ impl FileSys for DiskFs {
 
     fn remove(&self, id: Self::Path) -> Result<()> {
         let inum = self.root_dir.lock().path2inum(&id)?;
+        let mut rootdir = DISKFS.root_dir.lock();
+        rootdir.remove(inum)?;
         if let Some(arc) = self.inode_table.lock().get(&inum).and_then(Weak::upgrade) {
             arc.remove();
             return Ok(());

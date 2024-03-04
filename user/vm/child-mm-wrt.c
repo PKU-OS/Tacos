@@ -11,7 +11,7 @@
 void main() {
     int fd;
 
-    assert((fd = open("sample.txt", O_CREATE | O_TRUNC | O_WRONLY)) > 1);
+    assert((fd = open("sample.txt", O_WRONLY)) > 1);
     assert(mmap(fd, ACTUAL) != MAP_FAILED, "mmap \"sample.txt\"");
     memcpy(ACTUAL, sample, sizeof sample);
 }

@@ -16,6 +16,7 @@ pub const PRI_MAX: u32 = 63;
 pub const PRI_MIN: u32 = 0;
 pub const STACK_SIZE: usize = PG_SIZE * 4;
 pub const STACK_ALIGN: usize = 16;
+pub const STACK_TOP: usize = 0x80500000;
 
 pub type Mutex<T> = crate::sync::Mutex<T, crate::sync::Intr>;
 

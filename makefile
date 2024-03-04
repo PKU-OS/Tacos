@@ -11,7 +11,7 @@ include user/*.mk
 $(BUILD_DIR)/mkfs: mkfs.c
 	gcc -o $@ mkfs.c
 
-$(BUILD_DIR)/disk.img: $(TARGETS) $(BUILD_DIR)/mkfs $(BUILD_DIR)/sample.txt
+$(BUILD_DIR)/disk.img: $(TARGETS) $(BUILD_DIR)/mkfs $(BUILD_DIR)/sample.txt $(BUILD_DIR)/zeros
 	cd $(BUILD_DIR)/ && ./mkfs
 
 run: all

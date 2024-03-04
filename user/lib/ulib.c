@@ -142,7 +142,7 @@ void check_file_handle(int fd, const char* file_name, const void* buf_, size_t s
     stat s;
     fstat(fd, &s);
     if (s.size != size)
-        printf("size of %s (%zu) differs from expected (%zu)", file_name, s.size, size);
+        printf("size of %s (%d) differs from expected (%d)", file_name, s.size, size);
 
     /* Read the file block-by-block, comparing data as we go. */
     while (ofs < size) {
@@ -154,7 +154,7 @@ void check_file_handle(int fd, const char* file_name, const void* buf_, size_t s
 
         ret_val = read(fd, block, block_size);
         if (ret_val != block_size)
-            panic("read of %zu bytes at offset %zu in \"%s\" returned %zu", block_size, ofs,
+            panic("read of %d bytes at offset %d in \"%s\" returned %d", block_size, ofs,
                   file_name, ret_val);
 
         compare_bytes(block, buf + ofs, block_size, ofs, file_name);
@@ -163,7 +163,7 @@ void check_file_handle(int fd, const char* file_name, const void* buf_, size_t s
 
     /* Now fail due to wrong file size. */
     if (s.size != size)
-        panic("size of %s (%zu) differs from expected (%zu)", file_name, s.size, size);
+        panic("size of %s (%d) differs from expected (%d)", file_name, s.size, size);
 
     printf("verified contents of \"%s\"", file_name);
 }

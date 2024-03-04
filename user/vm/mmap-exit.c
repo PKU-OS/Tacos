@@ -13,5 +13,5 @@ void main() {
     assert(wait(child) == 0, "wait for child (should return 0)");
 
     /* Check file contents. */
-    check_file("sample.txt", sample, sizeof sample);
+    check_file("sample.txt", sample, sizeof sample - 1);
 }

@@ -101,7 +101,9 @@ int ends_with(const char *str, const char *suffix) {
 }
 
 int should_copy(const char* path) {
-  return strstr(path, ".") == NULL || ends_with(path, "sample.txt");
+  return strstr(path, ".") == NULL ||
+         ends_with(path, "sample.txt") ||
+         ends_with(path, "zeros");
 }
 
 char **read_filenames(const char* dir) {

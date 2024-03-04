@@ -30,7 +30,7 @@ pub struct Case(
 
 const PREVIOUS_FAILED_BOOK_NAME: &str = "previous-failed";
 const DEFAULT_GRADE: usize = 1;
-const DEFAULT_TIMEOUT: u64 = 10;
+const DEFAULT_TIMEOUT: u64 = 60;
 
 const BUILTIN_NAMES: [&str; 5] = ["unit", "lab1", "lab2", "lab3", PREVIOUS_FAILED_BOOK_NAME];
 

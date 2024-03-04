@@ -8,7 +8,7 @@
 #define SIZE (1024 * 1024)
 static char buf[SIZE];
 
-int main(int argc, char* argv[]) {
+void main(int argc, char* argv[]) {
     const char* key = argv[argc - 1];
     struct arc4 arc4;
     size_t i;
@@ -23,7 +23,5 @@ int main(int argc, char* argv[]) {
 
     /* Check that it's all zeros. */
     for (i = 0; i < SIZE; i++)
-        if (buf[i] != '\0') panic("byte %zu != 0", i);
-
-    return 0x42;
+        if (buf[i] != '\0') panic("byte %d != 0", i);
 }

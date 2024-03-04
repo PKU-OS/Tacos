@@ -6,9 +6,9 @@ use crate::mem::utils::*;
 use crate::sync::{Intr, Lazy, Mutex};
 
 // BuddyAllocator allocates at most `1<<MAX_ORDER` pages at a time
-const MAX_ORDER: usize = 10;
+const MAX_ORDER: usize = 8;
 // How many pages are there in the user memory pool
-const USER_POOL_LIMIT: usize = 1024;
+const USER_POOL_LIMIT: usize = 256;
 
 /// Buddy Allocator. It allocates and deallocates memory page-wise.
 #[derive(Debug)]
@@ -88,9 +88,9 @@ impl BuddyAllocator {
         let mut curr_ptr = ptr as usize;
         let mut curr_order = order;
 
-        while curr_order < self.free_lists.len() {
+        while curr_order < MAX_ORDER {
             // Find the buddy block of the current block
-            let buddy = curr_ptr ^ (1 << curr_order);
+            let buddy = curr_ptr ^ (1 << (curr_order + PG_SHIFT));
             // Try to find and merge blocks
             if let Some(blk) = self.free_lists[curr_order]
                 .iter_mut()
@@ -99,10 +99,10 @@ impl BuddyAllocator {
                 blk.pop();
                 // Merge two blocks into a bigger one
                 self.free_lists[curr_order].pop();
+                curr_ptr = min(curr_ptr, buddy);
                 self.free_lists[curr_order + 1].push(curr_ptr as *mut _);
                 // Attempt to form a even bigger block in the next iteration
                 curr_order += 1;
-                curr_ptr = min(curr_ptr, buddy);
             } else {
                 break;
             }

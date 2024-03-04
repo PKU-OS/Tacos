@@ -69,7 +69,9 @@ impl Condvar {
 
     /// Wake up one thread from the waiting list
     pub fn notify_one(&self) {
-        self.0.borrow_mut().pop_back().unwrap().up();
+        if let Some(sema) = self.0.borrow_mut().pop_back() {
+            sema.up();
+        }
     }
 
     /// Wake up all waiting threads
