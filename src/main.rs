@@ -34,6 +34,7 @@ extern "C" {
     fn sbss();
     fn ebss();
     fn ekernel();
+    fn bootstack();
 }
 
 pub type Result<T> = core::result::Result<T, OsError>;

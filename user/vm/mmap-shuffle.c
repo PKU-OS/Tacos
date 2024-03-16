@@ -21,11 +21,11 @@ void main() {
 
     /* Initialize. */
     for (i = 0; i < SIZE; i++) buf[i] = i * 257;
-    printf("init: cksum=%lu", cksum(buf, SIZE));
+    printf("init: cksum=%d", cksum(buf, SIZE));
 
     /* Shuffle repeatedly. */
     for (i = 0; i < 10; i++) {
         shuffle(buf, SIZE, 1);
-        printf("shuffle %zu: cksum=%lu", i, cksum(buf, SIZE));
+        printf("shuffle %d: cksum=%d", i, cksum(buf, SIZE));
     }
 }

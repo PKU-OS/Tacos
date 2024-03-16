@@ -17,6 +17,7 @@ pub const PRI_MIN: u32 = 0;
 pub const STACK_SIZE: usize = PG_SIZE * 4;
 pub const STACK_ALIGN: usize = 16;
 pub const STACK_TOP: usize = 0x80500000;
+pub const MAGIC: usize = 0xdeadbeef;
 
 pub type Mutex<T> = crate::sync::Mutex<T, crate::sync::Intr>;
 
@@ -76,6 +77,10 @@ impl Thread {
 
     pub fn context(&self) -> *mut Context {
         (&*self.context.lock()) as *const _ as *mut _
+    }
+
+    pub fn overflow(&self) -> bool {
+        unsafe { (self.stack as *const usize).read() != MAGIC }
     }
 }
 
@@ -150,6 +155,9 @@ impl Builder {
 
     pub fn build(self) -> Arc<Thread> {
         let stack = kalloc(STACK_SIZE, STACK_ALIGN) as usize;
+
+        // Put magic number at the bottom of the stack.
+        unsafe { (stack as *mut usize).write(MAGIC) };
 
         Arc::new(Thread::new(
             self.name,

@@ -5,11 +5,12 @@ use alloc::vec::Vec;
 use core::mem;
 use core::ops::DerefMut;
 
+use crate::bootstack;
 use crate::mem::KernelPgTable;
 use crate::sbi::interrupt;
 use crate::sync::Lazy;
 use crate::thread::{
-    schedule, switch, Builder, Mutex, Schedule, Scheduler, Status, Thread, PRI_DEFAULT, PRI_MIN,
+    schedule, switch, Builder, Mutex, Schedule, Scheduler, Status, Thread, MAGIC, PRI_DEFAULT, PRI_MIN
 };
 
 /* --------------------------------- MANAGER -------------------------------- */
@@ -26,7 +27,9 @@ pub struct Manager {
 impl Manager {
     pub fn get() -> &'static Self {
         static TMANAGER: Lazy<Manager> = Lazy::new(|| {
-            let initial = Arc::new(Thread::new("Initial", 0, PRI_DEFAULT, 0, None, None));
+            // Manully create initial thread.
+            let initial = Arc::new(Thread::new("Initial", bootstack as usize, PRI_DEFAULT, 0, None, None));
+            unsafe { (bootstack as *mut usize).write(MAGIC) };
             initial.set_status(Status::Running);
 
             let manager = Manager {
@@ -77,9 +80,11 @@ impl Manager {
             self.current.lock().status() == Status::Running || next.is_some(),
             "no thread is ready"
         );
+        assert!(!self.current.lock().overflow(), "Current thread has overflowed its stack.");
 
         if let Some(next) = next {
             assert_eq!(next.status(), Status::Ready);
+            assert!(!next.overflow(), "Next thread has overflowed its stack.");
             next.set_status(Status::Running);
 
             // Update the current thread to the next running thread
