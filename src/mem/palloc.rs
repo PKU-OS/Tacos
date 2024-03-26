@@ -8,7 +8,7 @@ use crate::sync::{Intr, Lazy, Mutex};
 // BuddyAllocator allocates at most `1<<MAX_ORDER` pages at a time
 const MAX_ORDER: usize = 8;
 // How many pages are there in the user memory pool
-const USER_POOL_LIMIT: usize = 256;
+pub(super) const USER_POOL_LIMIT: usize = 256;
 
 /// Buddy Allocator. It allocates and deallocates memory page-wise.
 #[derive(Debug)]
@@ -142,7 +142,6 @@ impl Palloc {
 
 pub struct UserPool(Lazy<Mutex<BuddyAllocator, Intr>>);
 
-// UserPool has only one instance, so it's safe to claim it as `Sync`
 unsafe impl Sync for UserPool {}
 
 impl UserPool {
@@ -156,16 +155,13 @@ impl UserPool {
         Self::instance().lock().dealloc(ptr, n)
     }
 
+    /// Initialize the page-based allocator
+    pub unsafe fn init(start: usize, end: usize) {
+        Self::instance().lock().insert_range(start, end);
+    }
+
     fn instance() -> &'static Mutex<BuddyAllocator, Intr> {
-        static USERPOOL: UserPool = UserPool(Lazy::new(|| unsafe {
-            let mut alloc = BuddyAllocator::empty();
-            let chunk_size = 1 << MAX_ORDER;
-            for _ in (0..USER_POOL_LIMIT).step_by(chunk_size) {
-                let start = Palloc::alloc(chunk_size) as usize;
-                alloc.insert_range(start, start + chunk_size * PG_SIZE);
-            }
-            Mutex::new(alloc)
-        }));
+        static USERPOOL: UserPool = UserPool(Lazy::new(|| Mutex::new(BuddyAllocator::empty())));
 
         &USERPOOL.0
     }

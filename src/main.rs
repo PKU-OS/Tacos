@@ -4,6 +4,7 @@
 extern crate alloc;
 extern crate bitflags;
 extern crate elf_rs;
+extern crate fdt;
 extern crate riscv;
 
 #[macro_use]
@@ -25,10 +26,12 @@ mod test;
 
 pub use error::OsError;
 
-use core::{ffi, ptr};
+use core::{ptr, slice, str};
+use fdt::{standard_nodes::MemoryRegion, Fdt};
 use riscv::register;
 
 use fs::{disk::DISKFS, FileSys};
+use mem::PhysAddr;
 
 extern "C" {
     fn sbss();
@@ -50,31 +53,42 @@ pub extern "C" fn main(hart_id: usize, dtb: usize) -> ! {
     // Flush BSS since they are not loaded and the corresponding memory may be random
     unsafe { ptr::write_bytes(sbss as *mut u8, 0, ebss as usize - sbss as usize) };
 
-    let tree = device::dtb::DeviceTree::new(dtb);
-
+    // Parse the device tree.
+    let devtree = unsafe { Fdt::from_ptr(dtb as *const u8).unwrap() };
     // Get the start point and length of physical memory
-    let (pm_base, pm_len, bootargs) = unsafe { tree.traverse() };
+    let (pm_base, pm_len) = {
+        let memory = devtree.memory();
+        let mut regions = memory.regions();
+        let MemoryRegion {
+            starting_address,
+            size,
+        } = regions.next().expect("No memory info.");
+        assert_eq!(regions.next(), None, "Unknown memory region");
+        (
+            starting_address as usize,
+            size.expect("Unknown physical memory length"),
+        )
+    };
     assert_eq!(pm_base, mem::PM_BASE, "Error constant mem::PM_BASE.");
-
     // Get the boot arguments.
     let _bootargs: &'static str = unsafe {
-        ffi::CStr::from_ptr(bootargs.add(mem::VM_OFFSET))
-            .to_str()
-            .expect("Bad bootarg.")
+        let (vm, len) = {
+            let bootargs = devtree.chosen().bootargs().unwrap();
+            let len = bootargs.len();
+            (PhysAddr::from_pa(bootargs.as_ptr() as usize).into_va(), len)
+        };
+        str::from_utf8(slice::from_raw_parts(vm as *const u8, len)).unwrap()
     };
 
+    // Initialize memory management.
     let ram_base = ekernel as usize;
     let ram_tail = dtb + mem::VM_OFFSET; // Current we do not reuse dtb area.
+    mem::init(ram_base, ram_tail, pm_len);
 
     #[cfg(feature = "debug")]
     {
         kprintln!("RAM: 0x{:x} - 0x{:x}", ram_base, ram_tail);
         kprintln!("BOOTARGS: {:?}", _bootargs);
-    }
-
-    unsafe {
-        mem::Palloc::init(ram_base, ram_tail);
-        mem::KernelPgTable::init(pm_len);
     }
 
     trap::set_strap_entry();

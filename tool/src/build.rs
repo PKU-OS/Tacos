@@ -4,10 +4,10 @@ const MAKE_DIR: &str = "..";
 
 pub fn main(args: crate::cli::BuildArgs) -> std::io::Result<()> {
     if args.rebuild {
-        make(args.verbose, &vec!["clean"])?;
+        make(args.verbose, &vec!["clean-tacos"])?;
         make(args.verbose, &vec![])?;
     } else if args.clean {
-        make(args.verbose, &vec!["clean"])?;
+        make(args.verbose, &vec!["clean-tacos"])?;
     } else {
         make(args.verbose, &vec![])?;
     }

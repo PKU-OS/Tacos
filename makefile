@@ -32,6 +32,11 @@ clean:
 	cargo clean
 	cd tool && cargo clean && cd ..
 
+clean-tacos:
+	rm -rf $(BUILD_DIR)
+	rm -f mkfs
+	cargo clean
+
 format:
 	cargo fmt
 	find . -type f -name "*.c" -o -name "*.h" -exec clang-format -i {} +

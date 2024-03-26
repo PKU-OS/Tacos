@@ -22,10 +22,22 @@ pub use self::pagetable::*;
 pub use self::palloc::Palloc;
 pub use self::utils::*;
 
+use self::palloc::USER_POOL_LIMIT;
+
 pub fn get_pte(va: usize) -> Option<Entry> {
     match crate::thread::Manager::get().current.lock().pagetable {
         Some(ref pt) => pt.lock().get_pte(va).copied(),
         None => KernelPgTable::get().get_pte(va).copied(),
+    }
+}
+
+pub fn init(ram_base: usize, ram_tail: usize, pm_len: usize) {
+    let palloc_tail = ram_tail - USER_POOL_LIMIT * PG_SIZE;
+
+    unsafe {
+        palloc::Palloc::init(ram_base, palloc_tail);
+        palloc::UserPool::init(palloc_tail, ram_tail);
+        KernelPgTable::init(pm_len);
     }
 }
 

@@ -74,24 +74,20 @@ pub extern "C" fn trap_handler(frame: &mut Frame) {
             thread::schedule();
         }
 
-        Interrupt(SupervisorExternal) => {
-            unsafe {
-                // Get the interrupt source.
-                let id = plic::read_claim();
+        Interrupt(SupervisorExternal) => unsafe {
+            // Get the interrupt source.
+            let id = plic::read_claim();
 
-                // Handle the interrupt.
-                match id as _ {
-                    0 => panic!("There should be an interrupt"),
-                    plic::VIRTIO0_ID => virtio::handle_interrupt(),
-                    _ => panic!("Unknown Interrupt ID: {}", id),
-                }
-
-                // Tell PLIC we've done with the interrupt.
-                plic::write_completion(id);
-
-                riscv::register::sstatus::set_sie()
+            // Handle the interrupt.
+            match id as _ {
+                0 => panic!("There should be an interrupt"),
+                plic::VIRTIO0_ID => virtio::handle_interrupt(),
+                _ => panic!("Unknown Interrupt ID: {}", id),
             }
-        }
+
+            // Tell PLIC we've done with the interrupt.
+            plic::write_completion(id);
+        },
 
         Exception(InstructionFault) | Exception(IllegalInstruction) => {
             // TODO: kill user process but not panic kernel
