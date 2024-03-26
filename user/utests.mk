@@ -18,6 +18,8 @@ SRCS := $(shell find $(SRC_DIRS) -name '*.c')
 OBJS := $(SRCS:%.c=$(BUILD_DIR)/%.o)
 TARGETS := $(OBJS:%.o=%)
 
+TEST_DIR := $(BUILD_DIR)/user
+
 $(BUILD_DIR)/%.S: %.pl
 	perl $^ > $@
 
@@ -41,10 +43,10 @@ $(TARGETS):%:%.o $(INCS)
 $(BUILD_DIR):
 	@ mkdir -p $(BUILD_DIR)
 
-$(BUILD_DIR)/sample.txt:
+$(TEST_DIR)/sample.txt:
 	#! Ensure sample.txt is stored with LF in disk.img
-	tr -d '\r' < user/userprogs/sample.txt > $(BUILD_DIR)/sample.txt
+	tr -d '\r' < user/userprogs/sample.txt > $(TEST_DIR)/sample.txt
 
-$(BUILD_DIR)/zeros:
-	dd if=/dev/zero of=$(BUILD_DIR)/zeros bs=8192 count=1
+$(TEST_DIR)/zeros:
+	dd if=/dev/zero of=$(TEST_DIR)/zeros bs=8192 count=1
 
