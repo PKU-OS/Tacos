@@ -14,6 +14,16 @@ pub struct DirEntry {
     inum: Inum,
 }
 
+impl DirEntry {
+    pub fn is_valid(&self) -> bool {
+        self.name[0] != '#' as u8 && self.name[0] != 0
+    }
+
+    pub fn invalidate(&mut self) {
+        self.name[0] = '#' as u8
+    }
+}
+
 /// Currently only support root dir. Other files should not be dir.
 pub struct RootDir(pub(super) File);
 
@@ -23,6 +33,9 @@ impl RootDir {
     pub fn path2inum(&mut self, path: &Path) -> Result<Inum> {
         self.0.rewind()?;
         while let Ok(entry) = self.0.read_into::<DirEntry>() {
+            if !entry.is_valid() {
+                continue;
+            }
             let name = unsafe {
                 core::ffi::CStr::from_ptr(&entry.name as *const u8 as *const i8)
                     .to_str()
@@ -84,15 +97,5 @@ impl RootDir {
             }
         }
         Err(OsError::RootDirFull)
-    }
-}
-
-impl DirEntry {
-    pub fn is_valid(&self) -> bool {
-        self.name[0] != '#' as u8 && self.name[0] != 0
-    }
-
-    pub fn invalidate(&mut self) {
-        self.name[0] = '#' as u8
     }
 }

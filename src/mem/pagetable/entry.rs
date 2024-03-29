@@ -1,5 +1,6 @@
 //! Page Table Entry
 
+use crate::mem::pagetable::PPN_MASK;
 use crate::mem::utils::{PhysAddr, PG_SHIFT};
 
 /// The format of Sv39 page table entry:
@@ -32,10 +33,9 @@ bitflags::bitflags! {
 
 impl Entry {
     const FLAG_SHIFT: usize = 10;
-    const PPN_MASK: usize = (1 << 44) - 1;
 
     pub fn new(pa: PhysAddr, flags: PTEFlags) -> Entry {
-        Entry((((pa.value() >> PG_SHIFT) & Self::PPN_MASK) << Self::FLAG_SHIFT) | flags.bits())
+        Entry((((pa.value() >> PG_SHIFT) & PPN_MASK) << Self::FLAG_SHIFT) | flags.bits())
     }
 
     fn flag(&self) -> PTEFlags {
@@ -43,7 +43,7 @@ impl Entry {
     }
 
     fn ppn(&self) -> usize {
-        self.0 >> Self::FLAG_SHIFT & Self::PPN_MASK
+        self.0 >> Self::FLAG_SHIFT & PPN_MASK
     }
 
     /// Physical address where the entry maps to

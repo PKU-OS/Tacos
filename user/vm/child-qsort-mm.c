@@ -4,7 +4,7 @@
 #include "user.h"
 #include "qsort.h"
 
-int main(int argc, char* argv[]) {
+void main(int argc, char* argv[]) {
     int fd;
     unsigned char* p = (unsigned char*)0x10000000;
 
@@ -12,5 +12,5 @@ int main(int argc, char* argv[]) {
     assert(mmap(fd, p) != MAP_FAILED);
     qsort_bytes(p, 1024 * 128);
 
-    return 80;
+    exit(80);
 }

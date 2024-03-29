@@ -30,10 +30,12 @@ use crate::mem::{
     palloc::UserPool,
     utils::{PageAlign, PhysAddr, PG_SIZE},
 };
-use crate::mem::{KERN_BASE, VM_OFFSET};
+use crate::mem::{KERN_BASE, PG_SHIFT, VM_OFFSET};
 use crate::sync::OnceCell;
 
 pub use self::entry::*;
+
+const PPN_MASK: usize = (1 << 44) - 1;
 
 /// Reference to a in-memory page table
 pub struct PageTable {
@@ -127,6 +129,13 @@ impl PageTable {
         }
     }
 
+    pub unsafe fn effective_pagetable() -> Self {
+        let satp: usize;
+        asm!("csrr {v}, satp", v = out(reg) satp);
+        let ppn = satp & PPN_MASK;
+        Self::from_raw(PhysAddr::from_pa(ppn << PG_SHIFT).into_va() as *mut _)
+    }
+
     fn walk(&self, index: usize) -> Option<PageTable> {
         self.entries
             .get(index)
@@ -148,8 +157,6 @@ impl PageTable {
 
     fn px(level: u32, va: usize) -> usize {
         fn px_shift(level: u32) -> usize {
-            use crate::mem::utils::PG_SHIFT;
-
             PG_SHIFT + 9 * level as usize
         }
 

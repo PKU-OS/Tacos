@@ -53,7 +53,7 @@ static void sort_chunks(const char* subprocess, int exit_status) {
         char fn[128];
         int fd;
 
-        assert(wait(children[i]) == exit_status, "wait for child %zu", i);
+        assert(wait(children[i]) == exit_status, "wait for child %d", i);
 
         /* Read chunk back from file. */
         strcpy(fn, "buf");
@@ -100,7 +100,7 @@ static void verify(void) {
     for (hist_idx = 0; hist_idx < sizeof histogram / sizeof *histogram; hist_idx++) {
         while (histogram[hist_idx]-- > 0) {
             if (buf2[buf_idx] != hist_idx)
-                panic("bad value %d in byte %zu", buf2[buf_idx], buf_idx);
+                panic("bad value %d in byte %d", buf2[buf_idx], buf_idx);
             buf_idx++;
         }
     }

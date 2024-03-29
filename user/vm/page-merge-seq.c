@@ -43,7 +43,7 @@ static void sort_chunks(void) {
         /* Sort with subprocess. */
         const char* args[] = {"child-sort", "buffer", 0};
         assert((child = exec(args[0], args)) != -1);
-        assert(wait(child) == 0, "wait for child-sort");
+        assert(wait(child) == 123, "wait for child-sort");
 
         /* Read chunk back from file. */
         assert((fd = open("buffer", 0)) > 2);

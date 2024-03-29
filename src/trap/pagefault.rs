@@ -1,9 +1,9 @@
-use crate::mem::KernelPgTable;
 use crate::mem::userbuf::{
     __knrl_read_usr_byte, __knrl_read_usr_exit, __knrl_write_usr_byte, __knrl_write_usr_exit,
 };
+use crate::mem::PageTable;
+use crate::thread::{self};
 use crate::trap::Frame;
-use crate::thread::{self, Mutex};
 use crate::userproc;
 
 use riscv::register::scause::Exception::{self, *};
@@ -13,9 +13,7 @@ pub fn handler(frame: &mut Frame, fault: Exception, addr: usize) {
     let privilege = frame.sstatus.spp();
 
     let present = {
-        let current = thread::current();
-        let pt = current.pagetable.as_ref().map(Mutex::lock);
-        let table = pt.as_deref().unwrap_or(KernelPgTable::get());
+        let table = unsafe { PageTable::effective_pagetable() };
         match table.get_pte(addr) {
             Some(entry) => entry.is_valid(),
             None => false,

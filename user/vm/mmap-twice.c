@@ -10,12 +10,12 @@ void main() {
     int fd[2];
 
     for (i = 0; i < 2; i++) {
-        assert((fd[i] = open("sample.txt", 0)) > 2, "open \"sample.txt\" #%zu", i);
-        assert(mmap(fd[i], actual[i]) != MAP_FAILED, "mmap \"sample.txt\" #%zu at %p", i,
+        assert((fd[i] = open("sample.txt", 0)) > 2, "open \"sample.txt\" #%d", i);
+        assert(mmap(fd[i], actual[i]) != MAP_FAILED, "mmap \"sample.txt\" #%d at %p", i,
                (void*)actual[i]);
     }
 
     for (i = 0; i < 2; i++)
-        assert(!memcmp(actual[i], sample, strlen(sample)), "compare mmap'd file %zu against data",
+        assert(!memcmp(actual[i], sample, strlen(sample)), "compare mmap'd file %d against data",
                i);
 }

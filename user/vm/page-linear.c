@@ -17,7 +17,7 @@ void main() {
 
     /* Check that it's all 0x5a. */
     for (i = 0; i < SIZE; i++)
-        if (buf[i] != 0x5a) panic("byte %zu != 0x5a", i);
+        if (buf[i] != 0x5a) panic("byte %d != 0x5a", i);
 
     /* Encrypt zeros. */
     arc4_init(&arc4, "foobar", 6);
@@ -29,5 +29,5 @@ void main() {
 
     /* Check that it's all 0x5a. */
     for (i = 0; i < SIZE; i++)
-        if (buf[i] != 0x5a) panic("byte %zu != 0x5a", i);
+        if (buf[i] != 0x5a) panic("byte %d != 0x5a", i);
 }

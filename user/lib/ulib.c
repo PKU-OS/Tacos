@@ -127,7 +127,7 @@ static void compare_bytes(const void* read_data_, const void* expected_data_, si
         if (read_data[j] == expected_data[j]) break;
 
     panic(
-        "%zu bytes read starting at offset %zu in \"%s\" differ "
+        "%d bytes read starting at offset %d in \"%s\" differ "
         "from expected",
         j - i, ofs + i, file_name);
 }

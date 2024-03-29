@@ -25,4 +25,5 @@ void main(int argc, char* argv[]) {
     seek(fd, 0);
     write(fd, buf, size);
     close(fd);
+    exit(123);
 }
