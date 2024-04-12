@@ -6,7 +6,7 @@ use crate::fs::FileSys;
 use crate::thread;
 use crate::userproc;
 
-const LEN: usize = 13;
+const LEN: usize = 11;
 const KILLED_USERPROC: [&str; LEN] = [
     // lab2 tests
     "bad-load",
@@ -19,10 +19,8 @@ const KILLED_USERPROC: [&str; LEN] = [
     "mmap-unmap",
     "mmap-zero",
     "pt-bad-addr",
-    "pt-bad-read",
     "pt-grow-bad",
     "pt-write-code",
-    "pt-write-code2",
 ];
 const KILLED_EXIT: isize = -1;
 const NORMAL_EXIT: isize = 0;

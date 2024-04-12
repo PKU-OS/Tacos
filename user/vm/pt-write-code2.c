@@ -7,6 +7,5 @@ void main() {
     int fd;
 
     assert((fd = open("sample.txt", 0)) > 2);
-    read(fd, (void*)main, 1);
-    panic("survived reading data into code segment");
+    assert(read(fd, (void*)main, 1) == -1);
 }

@@ -7,6 +7,5 @@ void main() {
     int fd;
 
     assert((fd = open("sample.txt", 0)) > 2);
-    read(fd, (char*)&fd - 4096, 1);
-    panic("survived reading data into bad address");
+    assert(read(fd, (char*)&fd - 4096, 1) == -1);
 }
