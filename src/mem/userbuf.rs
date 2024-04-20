@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use core::arch::{asm, global_asm};
+use core::arch::global_asm;
 
 use crate::error::OsError;
 use crate::mem::in_kernel_space;
@@ -36,15 +36,7 @@ fn write_user_byte(user_src: *const u8, value: u8) -> Result<()> {
         return Err(OsError::BadPtr);
     }
 
-    let mut ret_status: isize = 0;
-    unsafe {
-        asm! {
-            "call __knrl_write_usr_byte",
-            in("a0") user_src,
-            inout("a1") ret_status,
-            in("a2") value
-        }
-    };
+    let ret_status: u8 = unsafe { __knrl_write_usr_byte(user_src, value) };
 
     if ret_status == 0 {
         Ok(())
@@ -57,7 +49,8 @@ extern "C" {
     pub fn __knrl_read_usr_byte(user_src: *const u8, byte_ptr: *const u8) -> u8;
     pub fn __knrl_read_usr_byte_pc();
     pub fn __knrl_read_usr_exit();
-    pub fn __knrl_write_usr_byte(user_src: *const u8);
+    pub fn __knrl_write_usr_byte(user_src: *const u8, value: u8) -> u8;
+    pub fn __knrl_write_usr_byte_pc();
     pub fn __knrl_write_usr_exit();
 }
 
@@ -80,10 +73,15 @@ global_asm! {r#"
 
         .globl __knrl_write_usr_byte
         .globl __knrl_write_usr_exit
+        .globl __knrl_write_usr_byte_pc
 
     __knrl_write_usr_byte:
-        sb a2, (a0)
+        mv t1, a1
+        li a1, 0
+    __knrl_write_usr_byte_pc:
+        sb t1, (a0)
     __knrl_write_usr_exit:
         # pagefault handler will set a1 if any error occurs
+        mv a0, a1
         ret
 "#}

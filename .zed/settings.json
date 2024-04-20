@@ -1,0 +1,42 @@
+// Folder-specific settings
+//
+// For a full list of overridable settings, and general information on folder-specific settings,
+// see the documentation: https://zed.dev/docs/configuring-zed#folder-specific-settings
+{
+    // LSP Specific settings.
+    "lsp": {
+        // Specify the LSP name as a key here.
+        // As of 8/10/22, supported LSPs are:
+        // pyright
+        // gopls
+        // rust-analyzer
+        // typescript-language-server
+        // vscode-json-languageserver
+        // "rust-analyzer": {
+        //     //These initialization options are merged into Zed's defaults
+        //     "initialization_options": {
+        //         "checkOnSave": {
+        //             "command": "clippy"
+        //         }
+        //     }
+        // }
+        "rust-analyzer": {
+            "initialization_options": {
+                "check": {
+                    "allTargets": false,
+                    "extraArgs": [
+                        "--target",
+                        "riscv64gc-unknown-none-elf"
+                    ]
+                },
+                "cargo": {
+                    "features": [
+                        // "test",
+                        // "my-test"
+                        // "thread-scheduler-priority"
+                    ]
+                }
+            }
+        }
+    }
+}
