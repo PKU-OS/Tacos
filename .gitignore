@@ -36,3 +36,6 @@ mkfs
 
 # Submissions
 *.tar.bz2
+
+# Zed
+.zed
