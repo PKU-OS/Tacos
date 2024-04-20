@@ -1,5 +1,5 @@
 use crate::mem::userbuf::{
-    __knrl_read_usr_byte_pc, __knrl_read_usr_exit, __knrl_write_usr_byte, __knrl_write_usr_exit,
+    __knrl_read_usr_byte_pc, __knrl_read_usr_exit, __knrl_write_usr_byte_pc, __knrl_write_usr_exit,
 };
 use crate::mem::PageTable;
 use crate::thread::{self};
@@ -44,7 +44,7 @@ pub fn handler(frame: &mut Frame, fault: Exception, addr: usize) {
                 // Failed to read user byte from kernel space when trap in pagefault
                 frame.x[11] = 1; // set a1 to non-zero
                 frame.sepc = __knrl_read_usr_exit as _;
-            } else if frame.sepc == __knrl_write_usr_byte as _ {
+            } else if frame.sepc == __knrl_write_usr_byte_pc as _ {
                 // Failed to write user byte from kernel space when trap in pagefault
                 frame.x[11] = 1; // set a1 to non-zero
                 frame.sepc = __knrl_write_usr_exit as _;
