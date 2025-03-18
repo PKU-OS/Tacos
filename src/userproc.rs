@@ -41,7 +41,7 @@ pub fn execute(mut file: File, argv: Vec<String>) -> isize {
 
     // It only copies L2 pagetable. This approach allows the new thread
     // to access kernel code and data during syscall without the need to
-    // swithch pagetables.
+    // switch pagetables.
     let mut pt = KernelPgTable::clone();
 
     let exec_info = match load::load_executable(&mut file, &mut pt) {
