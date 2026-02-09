@@ -26,7 +26,7 @@ RUN rm -rf qemu-${QEMU_VERSION} qemu-${QEMU_VERSION}.tar.xz
 # Install Rust
 # - https://www.rust-lang.org/tools/install
 
-ARG RUST_VERSION=1.70
+ARG RUST_VERSION=stable
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
     PATH=/usr/local/cargo/bin:$PATH
