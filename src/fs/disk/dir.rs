@@ -37,7 +37,7 @@ impl RootDir {
                 continue;
             }
             let name = unsafe {
-                core::ffi::CStr::from_ptr(&entry.name as *const u8 as *const i8)
+                core::ffi::CStr::from_ptr(&entry.name as *const u8)
                     .to_str()
                     .or(Err(OsError::CstrFormatErr))?
             };
